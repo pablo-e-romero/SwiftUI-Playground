@@ -12,11 +12,11 @@ struct PushView: View {
         NavigationStack {
             VStack {
                 NavigationLink(value: "Push") {
-                    Text("Push")
+                    Text("Push counter")
                 }
             }
             .navigationDestination(for: String.self) { value in
-                DetailView(viewModel: DetailViewModel())
+                CounterView(viewModel: CounterViewModel())
             }
         }
         

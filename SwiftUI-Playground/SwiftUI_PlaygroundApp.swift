@@ -14,12 +14,12 @@ struct SwiftUI_PlaygroundApp: App {
             TabView {
                 PushView()
                     .tabItem {
-                        Label.init("Push", systemImage: "map")
+                        Label.init("Counter", systemImage: "clock")
                     }
                 
                 ImageView()
                     .tabItem {
-                        Label.init("Image", systemImage: "picture")
+                        Label.init("Image", systemImage: "photo")
                     }
             }
         }

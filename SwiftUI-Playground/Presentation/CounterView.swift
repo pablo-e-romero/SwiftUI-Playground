@@ -1,5 +1,5 @@
 //
-//  DetailView.swift
+//  CounterView.swift
 //  SwiftUI-Playground
 //
 //  Created by Pablo Romero on 13/10/25.
@@ -8,23 +8,25 @@
 import SwiftUI
 
 @MainActor
-final class DetailViewModel: ObservableObject {
+final class CounterViewModel: ObservableObject {
     @Published var text: String = "Loading"
    
     private var task: Task<Void, Never>?
     
     deinit {
         task?.cancel()
-        print("[HEY]", "SomeViewModel instance deinit")
+        print("CounterViewModel", "Instance deinit")
     }
 
     func subcribe() async {
+        print("CounterViewModel", "Subcribe")
+        
         let stream = Emitter.shared.makeStream()
         
         for await value in stream {
             guard !Task.isCancelled else { return }
             self.text = value
-            print("[HEY]", "Set \(self.text)")
+            print("CounterViewModel", "Set \(self.text)")
         }
     }
     
@@ -37,20 +39,20 @@ final class DetailViewModel: ObservableObject {
             do {
                 try await self?.executeAsyncTask()
             } catch {
-                print("[HEY]", "Task error: \(error)")
+                print("CounterViewModel", "Task error: \(error)")
             }
         }
     }
 
     private func executeAsyncTask() async throws {
-        print("[HEY]", "Begin async stuff")
+        print("CounterViewModel", "Begin async stuff")
         try await Task.sleep(for: .seconds(5))
-        print("[HEY]", "Async stuff has been done successfully")
+        print("CounterViewModel", "Async stuff has been done successfully")
     }
 }
 
-struct DetailView: View {
-    @ObservedObject var viewModel: DetailViewModel
+struct CounterView: View {
+    @ObservedObject var viewModel: CounterViewModel
     
     var body: some View {
         Text(viewModel.text)
