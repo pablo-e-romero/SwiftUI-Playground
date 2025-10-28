@@ -11,7 +11,17 @@ import SwiftUI
 struct SwiftUI_PlaygroundApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                PushView()
+                    .tabItem {
+                        Label.init("Push", systemImage: "map")
+                    }
+                
+                ImageView()
+                    .tabItem {
+                        Label.init("Image", systemImage: "picture")
+                    }
+            }
         }
     }
 }
