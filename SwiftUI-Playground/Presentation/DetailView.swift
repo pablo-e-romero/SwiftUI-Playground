@@ -11,22 +11,19 @@ import SwiftUI
 final class DetailViewModel: ObservableObject {
     @Published var text: String = "Loading"
    
-    private let stream: any AsyncSequence<String?, Never>
     private var task: Task<Void, Never>?
     
     deinit {
         task?.cancel()
         print("[HEY]", "SomeViewModel instance deinit")
     }
-    
-    init() {
-        self.stream = Emitter.shared.makeStream(of: \.value)
-    }
 
-    func processAsync() async {
-        for await value in self.stream {
+    func subcribe() async {
+        let stream = Emitter.shared.makeStream()
+        
+        for await value in stream {
             guard !Task.isCancelled else { return }
-            self.text = value ?? "Empty"
+            self.text = value
             print("[HEY]", "Set \(self.text)")
         }
     }
@@ -34,17 +31,18 @@ final class DetailViewModel: ObservableObject {
     func runTask() {
         guard task == nil else { return }
         
+        // [weak self] here is not making effect
         task = Task { [weak self] in
             defer { self?.task = nil }
             do {
-                try await self?.asyncTask()
+                try await self?.executeAsyncTask()
             } catch {
                 print("[HEY]", "Task error: \(error)")
             }
         }
     }
 
-    private func asyncTask() async throws {
+    private func executeAsyncTask() async throws {
         print("[HEY]", "Begin async stuff")
         try await Task.sleep(for: .seconds(5))
         print("[HEY]", "Async stuff has been done successfully")
@@ -58,7 +56,7 @@ struct DetailView: View {
         Text(viewModel.text)
             .font(.largeTitle)
             .task {
-                await viewModel.processAsync()
+                await viewModel.subcribe()
             }
             .onAppear() {
                 viewModel.runTask()

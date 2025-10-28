@@ -5,32 +5,31 @@
 //  Created by Pablo Romero on 28/10/25.
 //
 
-import Observation
+import Foundation
 
-@MainActor
-@Observable
 final class Emitter {
-    var value: String?
-    
-    @ObservationIgnored
     static let shared = Emitter()
     
-    @ObservationIgnored
+    private let broadcast = BroadcastStream<String>()
     private var task: Task<Void, Never>?
     
     private init() {
-        emit()
+        start()
     }
     
     deinit {
         task?.cancel()
     }
     
-    func emit() {
+    func makeStream() -> some AsyncSequence<String, Never> {
+        broadcast.makeStream()
+    }
+    
+    private func start() {
         task = Task { [weak self] in
             for value in 1...1000 {
                 try? await Task.sleep(for: .seconds(1))
-                self?.value = "\(value)"
+                self?.broadcast.yield("\(value)")
             }
         }
     }
