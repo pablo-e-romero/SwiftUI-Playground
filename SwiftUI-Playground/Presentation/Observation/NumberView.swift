@@ -7,12 +7,39 @@
 
 import SwiftUI
 
-@Observable
-final class NumberViewModel {
+actor NumberHandler {
     var currentNumber = 0
     
-    func onIncrementButtonTap() {
+    func increment() -> Int {
+        print("🧵", "increment", Thread.currentThread)
         currentNumber += 1
+        return currentNumber
+    }
+}
+
+extension Thread {
+    nonisolated static var currentThread: Thread {
+        Self.current
+    }
+}
+
+@Observable
+final class NumberViewModel {
+    var currentNumber: Int?
+    private let numberHandler = NumberHandler()
+    
+    init() {
+        Task {
+            print("🧵", "init", Thread.currentThread)
+            currentNumber = await numberHandler.currentNumber
+        }
+    }
+    
+    func onIncrementButtonTap() {
+        Task {
+            print("🧵", "onIncrementButtonTap", Thread.currentThread)
+            currentNumber = await numberHandler.increment()
+        }
     }
 }
 
@@ -38,7 +65,7 @@ private struct IncrementalNumberView: View {
  
     var body: some View {
         VStack {
-            Text("Count: \(viewModel.currentNumber)")
+            Text("Count: \(viewModel.currentNumber ?? -1)")
                 .font(.title)
             Button(
                 "Increment",
