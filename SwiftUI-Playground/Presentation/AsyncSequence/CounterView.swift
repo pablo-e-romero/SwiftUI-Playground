@@ -12,12 +12,15 @@ final class CounterViewModel: ObservableObject {
     @Published var text: String = "Loading"
    
     private var task: Task<Void, Never>?
+    private var subscriptionTask: Task<Void, Never>?
     
     deinit {
         task?.cancel()
+        subscriptionTask?.cancel()
         print("CounterViewModel", "Instance deinit")
     }
 
+    // This is cancelled when I move to another screen and the resumed
     func subcribe() async {
         print("CounterViewModel", "Subcribe")
         
@@ -27,6 +30,25 @@ final class CounterViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
             self.text = value
             print("CounterViewModel", "Set \(self.text)")
+        }
+    }
+    
+    // This is not cancelled when I move to another screen
+    // keeps updating and is not leaking
+    func subcribe() {
+        guard subscriptionTask == nil else { return }
+        print("CounterViewModel", "Subcribe")
+        
+        subscriptionTask = Task { [weak self] in
+            defer { self?.subscriptionTask = nil }
+            
+            for await value in Emitter.shared.makeStream() {
+                guard !Task.isCancelled else { return }
+                self?.text = value
+                print("CounterViewModel", "Set \(self?.text ?? "")")
+            }
+            
+            print("CounterViewModel", "Completed subscription")
         }
     }
     
@@ -57,10 +79,11 @@ struct CounterView: View {
     var body: some View {
         Text(viewModel.text)
             .font(.largeTitle)
-            .task {
-                await viewModel.subcribe()
-            }
+//            .task {
+//                await viewModel.subcribe()
+//            }
             .onAppear() {
+                viewModel.subcribe()
                 viewModel.runTask()
             }
     }
