@@ -24,7 +24,12 @@ struct SwiftUI_PlaygroundApp: App {
                 
                 NumberView()
                     .tabItem {
-                        Label("Observable", systemImage: "watch")
+                        Label("Observable", systemImage: "number")
+                    }
+                
+                DemoWebView()
+                    .tabItem {
+                        Label("Web View", systemImage: "www")
                     }
             }
         }
