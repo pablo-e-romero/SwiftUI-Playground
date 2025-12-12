@@ -31,6 +31,11 @@ struct SwiftUI_PlaygroundApp: App {
                     .tabItem {
                         Label("Web View", systemImage: "www")
                     }
+                
+                BottomSheetView()
+                    .tabItem {
+                        Label("Bottom Sheet", systemImage: "box")
+                    }
             }
         }
     }
