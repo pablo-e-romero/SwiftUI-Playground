@@ -17,24 +17,9 @@ struct SwiftUI_PlaygroundApp: App {
                         Label("Async Sequence", systemImage: "clock")
                     }
                 
-                ImageView()
+                MenuView()
                     .tabItem {
-                        Label("Simple View", systemImage: "photo")
-                    }
-                
-                NumberView()
-                    .tabItem {
-                        Label("Observable", systemImage: "number")
-                    }
-                
-                DemoWebView()
-                    .tabItem {
-                        Label("Web View", systemImage: "www")
-                    }
-                
-                BottomSheetView()
-                    .tabItem {
-                        Label("Bottom Sheet", systemImage: "box")
+                        Label("More", systemImage: "ellipsis")
                     }
             }
         }

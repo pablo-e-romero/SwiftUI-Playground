@@ -21,7 +21,7 @@ struct BottomSheetView: View {
                     .searchable(text: $query)
                     .navigationTitle(" Search")
             }
-            .interactiveDismissDisabled()
+//            .interactiveDismissDisabled()
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
             .presentationCornerRadius(16)

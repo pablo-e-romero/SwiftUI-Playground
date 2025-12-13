@@ -17,12 +17,6 @@ actor NumberHandler {
     }
 }
 
-extension Thread {
-    nonisolated static var currentThread: Thread {
-        Self.current
-    }
-}
-
 @Observable
 final class NumberViewModel {
     var currentNumber: Int?
@@ -47,16 +41,14 @@ struct NumberView: View {
     @State private var tint: Color = Color.accentColor
     
     var body: some View {
-        NavigationStack {
-            IncrementalNumberView()
-                .tint(tint)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        ColorPicker("Tint Color", selection: $tint)
-                            .labelsHidden()
-                    }
+        IncrementalNumberView()
+            .tint(tint)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ColorPicker("Tint Color", selection: $tint)
+                        .labelsHidden()
                 }
-        }
+            }
     }
 }
 

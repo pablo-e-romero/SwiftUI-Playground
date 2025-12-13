@@ -39,23 +39,21 @@ struct DemoWebView: View {
     @State private var toggle = false
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                Group {
-                    ZStack {
-                        toggle ? Color.red : Color.green
-                        Text(viewModel.stateDescription)
-                    }
+        VStack {
+            Group {
+                ZStack {
+                    toggle ? Color.red : Color.green
+                    Text(viewModel.stateDescription)
                 }
-                .frame(height: 100)
-                
-                WebView(viewModel.page)
-                    .navigationTitle(viewModel.page.title)
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Toggle("Switch", isOn: $toggle)
-                }
+            .frame(height: 100)
+            
+            WebView(viewModel.page)
+                .navigationTitle(viewModel.page.title)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Toggle("Switch", isOn: $toggle)
             }
         }
         .task {
