@@ -9,6 +9,7 @@ import SwiftUI
 import WebKit
 
 @Observable
+@MainActor
 final class DemoWebViewModel {
     private(set) var stateDescription: String = "idle"
     private(set) var page: WebPage

@@ -7,6 +7,7 @@
 
 import Observation
 
+@MainActor
 extension Observable {
     func makeStream<Value: Sendable>(
         of keyPath: KeyPath<Self, Value>

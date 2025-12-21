@@ -32,6 +32,7 @@ enum MenuOption {
     }
     
     @ViewBuilder
+    @MainActor
     var view: some View {
         switch self {
         case .simpleImage: ImageView()
