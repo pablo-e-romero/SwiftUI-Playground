@@ -6,38 +6,38 @@
 //
 
 import Foundation
+import Synchronization
 
-final class BroadcastStream<Element: Sendable>: @unchecked Sendable {
-    private var continuations = [UUID: AsyncStream<Element>.Continuation]()
-    private let lock = NSLock()
+final class BroadcastStream<Element: Sendable>: Sendable {
+    private let continuations: Mutex<[UUID: AsyncStream<Element>.Continuation]> = .init([:])
 
     func makeStream() -> AsyncStream<Element> {
         AsyncStream { continuation in
-            let id = addContinuation(continuation)
+            let id = continuations.withLock { continuations in
+                let id = UUID()
+                continuations[id] = continuation
+                return id
+            }
             
             continuation.onTermination = { [weak self] _ in
-                Task { await self?.removeContinuation(with: id) }
+                self?.continuations.withLock { continuations in
+                    continuations[id] = nil
+                }
             }
         }
     }
     
     func yield(_ element: Element) {
-        lock.lock()
-        continuations.values.forEach { $0.yield(element) }
-        lock.unlock()
-    }
-    
-    private func removeContinuation(with id: UUID) {
-        lock.lock()
-        continuations[id] = nil
-        lock.unlock()
+        continuations.withLock { continuations in
+            continuations.values.forEach { $0.yield(element) }
+        }
     }
     
     private func addContinuation(_ continuation: AsyncStream<Element>.Continuation) -> UUID {
-        let id = UUID()
-        lock.lock()
-        continuations[id] = continuation
-        lock.unlock()
-        return id
+        continuations.withLock { continuations in
+            let id = UUID()
+            continuations[id] = continuation
+            return id
+        }
     }
 }
