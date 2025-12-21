@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct SwiftUI_PlaygroundApp: App {
-    var body: some Scene {
+   var body: some Scene {
         WindowGroup {
             TabView {
                 PushView()

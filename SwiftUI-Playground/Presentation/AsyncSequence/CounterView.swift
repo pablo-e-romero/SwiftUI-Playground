@@ -20,7 +20,7 @@ final class CounterViewModel: ObservableObject {
         print("CounterViewModel", "Instance deinit")
     }
 
-    // This is cancelled when I move to another screen and the resumed
+    // This is cancelled when I move to another screen and then resumed
     func subcribe() async {
         print("CounterViewModel", "Subcribe")
         
