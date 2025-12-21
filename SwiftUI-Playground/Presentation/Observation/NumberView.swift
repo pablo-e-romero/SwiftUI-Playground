@@ -11,6 +11,7 @@ actor NumberHandler {
     var currentNumber = 0
     
     func increment() -> Int {
+        print("🧵", "isolation", #isolation)
         print("🧵", "increment", Thread.currentThread)
         currentNumber += 1
         return currentNumber
@@ -18,22 +19,29 @@ actor NumberHandler {
 }
 
 @Observable
+@MainActor
 final class NumberViewModel {
     var currentNumber: Int?
     private let numberHandler = NumberHandler()
     
     init() {
         Task {
+//            print("🧵", "isolation", "\(#isolation)")
             print("🧵", "init", Thread.currentThread)
             currentNumber = await numberHandler.currentNumber
         }
     }
     
-    func onIncrementButtonTap() {
+    nonisolated func onIncrementButtonTap() {
         Task {
+//            print("🧵", "isolation", "\(#isolation)")
             print("🧵", "onIncrementButtonTap", Thread.currentThread)
-            currentNumber = await numberHandler.increment()
+            await updateUI()
         }
+    }
+    
+    private func updateUI() async {
+        currentNumber = await numberHandler.increment()
     }
 }
 
